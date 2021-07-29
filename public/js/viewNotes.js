@@ -26,8 +26,10 @@ const renderDataAsHtml = (data) => {
   let cards = ``;
   for(const noteId in data) {
     const note = data[noteId];
-    // For each note create an HTML card
-    cards += createCard(note, noteId)
+    if (note.status !== 'archived') {
+        // For each note create an HTML card
+        cards += createCard(note, noteId)
+    }
   };
   // Inject our string of HTML into our viewNotes.html page
   document.querySelector('#app').innerHTML = cards;
@@ -49,6 +51,9 @@ const createCard = (note, noteId) => {
             </a>
             <a href="#" class="card-footer-item" onclick="editNote('${noteId}')">
                 Edit
+            </a>
+            <a href="#" class="card-footer-item" onclick="archiveNote('${noteId}')">
+                Archive
             </a>
          </footer>
        </div>
@@ -104,3 +109,6 @@ const closeDeleteNoteModal = () => {
     deleteNoteModal.classList.toggle('is-active')
 }
 
+const archiveNote = (noteId) => {
+    firebase.database().ref(`users/${googleUserId}/${noteId}`).update({status: 'archived'})
+}
