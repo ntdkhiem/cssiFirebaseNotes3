@@ -5,8 +5,7 @@ window.onload = (event) => {
   firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
       console.log('Logged in as: ' + user.displayName);
-      googleUserId = user.uid;
-      getNotes(googleUserId);
+      googleUserId = user;
     } else {
       // If not logged in, navigate back to login page.
       window.location = 'index.html'; 
@@ -14,23 +13,21 @@ window.onload = (event) => {
   });
 };
 
-const getNotes = (userId) => {
-  const notesRef = firebase.database().ref(`users/${userId}`);
-  notesRef.on('value', (snapshot) => {
-    const data = snapshot.val();
-    renderDataAsHtml(data);
-  });
+const getNotes = (status) => {
+    const notesRef = firebase.database().ref(`users/${googleUserId.uid}`).orderByChild('status').equalTo(status);
+    notesRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        console.log(data)
+        renderDataAsHtml(data);
+    });
 };
 
 const renderDataAsHtml = (data) => {
   let cards = ``;
-  for(const noteId in data) {
-    const note = data[noteId];
-    if (note.status !== 'archived') {
-        // For each note create an HTML card
-        cards += createCard(note, noteId)
-    }
-  };
+  data = sortByTitle(data)
+  data.forEach((item) => {
+    cards += createCard(item[1], item[0])
+  })
   // Inject our string of HTML into our viewNotes.html page
   document.querySelector('#app').innerHTML = cards;
 };
@@ -110,5 +107,18 @@ const closeDeleteNoteModal = () => {
 }
 
 const archiveNote = (noteId) => {
-    firebase.database().ref(`users/${googleUserId}/${noteId}`).update({status: 'archived'})
+    firebase.database().ref(`users/${googleUserId.uid}/${noteId}`).update({status: 'archived'})
+}
+
+// From https://stackoverflow.com/questions/25500316/sort-a-dictionary-by-value-in-javascript
+const sortByTitle = (data) => {
+    // Create items array
+    var items = Object.keys(data).map(function(key) {
+        return [key, data[key]];
+    });
+
+    // Sort the array based on the second element
+    return items.sort(function(first, second) {
+        return first[1].title - second[1].title;
+    });
 }
