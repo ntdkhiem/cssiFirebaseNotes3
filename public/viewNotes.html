@@ -62,5 +62,18 @@
             </footer>
         </div>
     </div>
+    <div id="deleteNoteModal" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <section class="modal-card-body">
+                Are you sure?
+                <input type="hidden" id="deleteNoteId" />
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-danger" onclick="deleteNote()">Yes</button>
+                <button class="button" onclick="closeDeleteNoteModal()">No</button>
+            </footer>
+        </div>
+    </div>
   </body>
 </html>

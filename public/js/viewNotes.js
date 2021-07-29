@@ -44,7 +44,7 @@ const createCard = (note, noteId) => {
            <div class="content">${note.text}</div>
          </div>
          <footer class="card-footer">
-            <a href="#" class="card-footer-item" onclick="deleteNote('${noteId}')">
+            <a href="#" class="card-footer-item" onclick="deleteNoteModal('${noteId}')">
                 Delete
             </a>
             <a href="#" class="card-footer-item" onclick="editNote('${noteId}')">
@@ -57,9 +57,16 @@ const createCard = (note, noteId) => {
 };
 
 
-const deleteNote = (noteId) => {
-    console.log('Delete', noteId)
-    firebase.database().ref(`users/${googleUserId}/${noteId}`).remove();
+const deleteNoteModal = (noteId) => {
+    const deleteNoteModal = document.querySelector('#deleteNoteModal')
+    deleteNoteModal.querySelector('#deleteNoteId').value = noteId
+    deleteNoteModal.classList.toggle('is-active')
+}
+
+const deleteNote = () => {
+    const deleteNoteId = document.querySelector('#deleteNoteId').value;
+    firebase.database().ref(`users/${googleUserId}/${deleteNoteId}`).remove();
+    closeDeleteNoteModal()
 }
 
 
@@ -90,5 +97,10 @@ const saveEditedNote = () => {
 const closeEditModal = () => {
     // I don't have to define editNoteModal here but it works??
     editNoteModal.classList.toggle('is-active')
+}
+
+const closeDeleteNoteModal = () => {
+    const deleteNoteModal = document.querySelector('#deleteNoteModal')
+    deleteNoteModal.classList.toggle('is-active')
 }
 
