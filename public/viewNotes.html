@@ -47,6 +47,20 @@
         </div>
       </div>
     </footer>
-  </body>
 
+    <div id="editNoteModal" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <section class="modal-card-body">
+                <input class="input is-normal" id="editTitleInput" type="text"/>
+                <input class="input is-normal" id="editTextInput" type="text" />
+                <input id="noteId" type="hidden" />
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-success" onclick="saveEditedNote()">Save Changes</button>
+                <button class="button" onclick="closeEditModal()">Cancel</button>
+            </footer>
+        </div>
+    </div>
+  </body>
 </html>
