@@ -144,6 +144,6 @@ const sortByTitle = (data) => {
 
     // Sort the array based on the second element
     return items.sort(function(first, second) {
-        return first[1].title - second[1].title;
+        return first[1].title.localeCompare(second[1].title);
     });
 }
