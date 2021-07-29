@@ -17,22 +17,43 @@ const getNotes = (status) => {
     const notesRef = firebase.database().ref(`users/${googleUserId.uid}`).orderByChild('status').equalTo(status);
     notesRef.on('value', (snapshot) => {
         const data = snapshot.val();
-        console.log(data)
-        renderDataAsHtml(data);
+        renderDataAsHtml(data, status);
     });
 };
 
-const renderDataAsHtml = (data) => {
+const renderDataAsHtml = (data, status) => {
   let cards = ``;
   data = sortByTitle(data)
   data.forEach((item) => {
-    cards += createCard(item[1], item[0])
+    cards += createCard(item[1], item[0], status)
   })
   // Inject our string of HTML into our viewNotes.html page
   document.querySelector('#app').innerHTML = cards;
 };
 
-const createCard = (note, noteId) => {
+const createCard = (note, noteId, status) => {
+    if (status === "archived") {
+        return `
+     <div class="column is-one-quarter">
+       <div class="card">
+         <header class="card-header">
+           <p class="card-header-title">${note.title}</p>
+         </header>
+         <div class="card-content">
+           <div class="content">${note.text}</div>
+         </div>
+         <footer class="card-footer">
+            <a href="#" class="card-footer-item" onclick="deleteNoteModal('${noteId}')">
+                Delete
+            </a>
+            <a href="#" class="card-footer-item" onclick="markUnreadNote('${noteId}')">
+                Mark Unread
+            </a>
+         </footer>
+       </div>
+     </div>
+   `
+    }
    return `
      <div class="column is-one-quarter">
        <div class="card">
@@ -108,6 +129,10 @@ const closeDeleteNoteModal = () => {
 
 const archiveNote = (noteId) => {
     firebase.database().ref(`users/${googleUserId.uid}/${noteId}`).update({status: 'archived'})
+}
+
+const markUnreadNote = (noteId) => {
+    firebase.database().ref(`users/${googleUserId.uid}/${noteId}`).update({status: 'unread'})
 }
 
 // From https://stackoverflow.com/questions/25500316/sort-a-dictionary-by-value-in-javascript
